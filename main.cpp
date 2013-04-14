@@ -53,7 +53,7 @@ void generate_identifier(context& c)
     ptrdiff_t i = rand_0n(c.rng, boost::size(ids));
     assert(i >= 0 && i < boost::size(ids));
 
-    std::cout << " " << ids[i] << rand_0n(c.rng, 16) << " ";
+    std::cout << ids[i] << rand_0n(c.rng, 16) << " ";
 }
 
 void generate_paren(context& c)
@@ -93,12 +93,6 @@ void generate_braces(context& c)
         return;
     }
 
-    if (rand_0n(c.rng, static_cast<size_t>(c.max_nesting_depth)) < c.nesting_depth)
-    {
-        generate_identifier(c);
-        return;
-    }
-
     c.tokens_left -= 2;
 
     std::cout << "\n";
@@ -120,7 +114,7 @@ void generate_braces(context& c)
 
 void generate_punctuator(context& c)
 {
-    static const char* const puncs[] = {",", ":", ";", "*", "=", "...", "#", ".", "->", "++", "--", "##",
+    static const char* const puncs[] = {",", ":", ";", "*", "=", "...", /*"#",*/ ".", "->", "++", "--", /*"##",*/
                                          "&", "+", "-", "~", "!", "/", "%", "<<", ">>", "!=",
                                          "<", ">", "<=", ">=", "==", "^", "|", "&&", "||", "?",
                                          "*=", "/=", "%=", "+=", "-=", "<<=", ">>=", "&=", "^=", "|=",
@@ -131,7 +125,7 @@ void generate_punctuator(context& c)
     ptrdiff_t i = rand_0n(c.rng, boost::size(puncs));
     assert(i >= 0 && i < boost::size(puncs));
 
-    std::cout << " " << puncs[i] << " ";
+    std::cout << puncs[i] << " ";
 }
 
 void generate_keyword(context& c)
@@ -153,7 +147,7 @@ void generate_keyword(context& c)
     ptrdiff_t i = rand_0n(c.rng, boost::size(kws));
     assert(i >= 0 && i < boost::size(kws));
 
-    std::cout << " " << kws[i] << " ";
+    std::cout << kws[i] << " ";
 }
 
 void generate_integer_literal(context& c)
@@ -161,15 +155,25 @@ void generate_integer_literal(context& c)
     static const char* const suffixes[] = {"", "u", "l", "ul", "ll", "ull"};
     --c.tokens_left;
 
-    std::cout << " " << rand_0n(c.rng, 123) << suffixes[rand_0n(c.rng, boost::size(suffixes))] << " ";
+    std::cout << rand_0n(c.rng, 123) << suffixes[rand_0n(c.rng, boost::size(suffixes))] << " ";
+}
+
+void generate_float_literal(context& c)
+{
+    static const char* const suffixes[] = {".f", "."};
+    --c.tokens_left;
+
+    std::cout << rand_0n(c.rng, 123) << suffixes[rand_0n(c.rng, boost::size(suffixes))] << " ";
 }
 
 void generate_once(context &c)
 {
-    static const double weights[] = {5., 2., 10.,
-                                     4., 1., 2.};
+    const double weights[] = {5., 2., 10.,
+                              4., double(c.max_nesting_depth - c.nesting_depth) / 2., 2.,
+                              2.};
     void (*gens[])(context&) = {&generate_identifier, &generate_paren, &generate_punctuator,
-                                &generate_keyword, &generate_braces, &generate_integer_literal};
+                                &generate_keyword, &generate_braces, &generate_integer_literal,
+                                &generate_float_literal};
 
     boost::random::discrete_distribution<ptrdiff_t> dist(weights);
 
@@ -179,20 +183,26 @@ void generate_once(context &c)
     gens[i](c);
 }
 
-void generate_all(context &c)
-{
-    while (c.tokens_left != 0)
-    {
-        generate_once(c);
-    }
-}
-
 void generate_some(context &c)
 {
     unsigned n = boost::uniform_int<unsigned>(0, 7)(c.rng);
 
     while (n != 0 && c.tokens_left != 0)
+    {
         generate_once(c);
+        --n;
+    }
+
+    std::cout << "\n";
+    print_indent(c);
+}
+
+void generate_all(context &c)
+{
+    while (c.tokens_left != 0)
+    {
+        generate_some(c);
+    }
 }
 
 int main(int argc, char* argv[])
