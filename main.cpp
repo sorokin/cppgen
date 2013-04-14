@@ -46,14 +46,21 @@ void generate_some(context& c);
 
 void generate_identifier(context& c)
 {
-    static const char* const ids[] = {"foo", "bar", "baz", "qux"};
+    const double weights[] = {20., 15., 7., 1., 0.1, 0.02,
+                              0.02, 0.05, 0.05, 0.02, 0.05,
+                              0.05, 0.05};
+    static const char* const ids[] = {"foo", "bar", "baz", "qux", "quux", "corge",
+                                      "grault", "garply", "waldo", "fred", "plugh",
+                                      "xyzzy", "thud"};
 
     --c.tokens_left;
 
-    ptrdiff_t i = rand_0n(c.rng, boost::size(ids));
+    boost::random::discrete_distribution<ptrdiff_t> dist(weights);
+
+    ptrdiff_t i = dist(c.rng);
     assert(i >= 0 && i < boost::size(ids));
 
-    std::cout << ids[i] << rand_0n(c.rng, 16) << " ";
+    std::cout << ids[i] << rand_0n(c.rng, 7) << " ";
 }
 
 void generate_paren(context& c)
@@ -101,6 +108,7 @@ void generate_braces(context& c)
     ++c.nesting_depth;
     ++c.indent;
 
+    print_indent(c);
     generate_some(c);
     std::cout << "\n";
 
