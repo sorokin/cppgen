@@ -156,12 +156,21 @@ void generate_keyword(context& c)
     std::cout << " " << kws[i] << " ";
 }
 
+void generate_integer_literal(context& c)
+{
+    static const char* const suffixes[] = {"", "u", "l", "ul", "ll", "ull"};
+    --c.tokens_left;
+
+    std::cout << " " << generate_0_n(c.rng, 123) << suffixes[generate_0_n(c.rng, boost::size(suffixes))] << " ";
+}
+
 void generate_once(context &c)
 {
-    static const double probabilities[] = {0.25, 0.03, 0.5, 0.2, 0.02};
-    void (*gens[])(context&) = {&identifier_generator, &paren_generator, &punctuator_generator, &generate_keyword, &braces_generator};
+    static const double weights[] = {0.25, 0.03, 0.45, 0.2, 0.02, 0.05};
+    void (*gens[])(context&) = {&identifier_generator, &paren_generator, &punctuator_generator,
+                                &generate_keyword, &braces_generator, &generate_integer_literal};
 
-    boost::random::discrete_distribution<ptrdiff_t> dist(probabilities);
+    boost::random::discrete_distribution<ptrdiff_t> dist(weights);
 
     ptrdiff_t i = dist(c.rng);
     assert(i >= 0 && i < boost::size(gens));
