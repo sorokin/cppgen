@@ -33,7 +33,7 @@ void print_indent(context const& c)
 }
 
 template <typename Engine, typename Int>
-Int generate_0_n(Engine& e, Int limit)
+Int rand_0n(Engine& e, Int limit)
 {
     assert(limit != 0);
 
@@ -44,38 +44,38 @@ Int generate_0_n(Engine& e, Int limit)
 
 void generate_some(context& c);
 
-void identifier_generator(context& c)
+void generate_identifier(context& c)
 {
     static const char* const ids[] = {"foo", "bar", "baz", "qux"};
 
     --c.tokens_left;
 
-    ptrdiff_t i = generate_0_n(c.rng, boost::size(ids));
+    ptrdiff_t i = rand_0n(c.rng, boost::size(ids));
     assert(i >= 0 && i < boost::size(ids));
 
-    std::cout << " " << ids[i] << generate_0_n(c.rng, 16) << " ";
+    std::cout << " " << ids[i] << rand_0n(c.rng, 16) << " ";
 }
 
-void paren_generator(context& c)
+void generate_paren(context& c)
 {
     static const char* const left[]  = {"(", "[", " < "};
     static const char* const right[] = {")", "]", " > "};
 
     if (c.tokens_left == 1)
     {
-        identifier_generator(c);
+        generate_identifier(c);
         return;
     }
 
-    if (generate_0_n(c.rng, static_cast<size_t>(c.max_nesting_depth)) < c.nesting_depth)
+    if (rand_0n(c.rng, static_cast<size_t>(c.max_nesting_depth)) < c.nesting_depth)
     {
-        identifier_generator(c);
+        generate_identifier(c);
         return;
     }
 
     c.tokens_left -= 2;
 
-    ptrdiff_t i = generate_0_n(c.rng, boost::size(left));
+    ptrdiff_t i = rand_0n(c.rng, boost::size(left));
     assert(i >= 0 && i < boost::size(left));
 
     std::cout << left[i];
@@ -85,17 +85,17 @@ void paren_generator(context& c)
     std::cout << right[i];
 }
 
-void braces_generator(context& c)
+void generate_braces(context& c)
 {
     if (c.tokens_left == 1)
     {
-        identifier_generator(c);
+        generate_identifier(c);
         return;
     }
 
-    if (generate_0_n(c.rng, static_cast<size_t>(c.max_nesting_depth)) < c.nesting_depth)
+    if (rand_0n(c.rng, static_cast<size_t>(c.max_nesting_depth)) < c.nesting_depth)
     {
-        identifier_generator(c);
+        generate_identifier(c);
         return;
     }
 
@@ -118,7 +118,7 @@ void braces_generator(context& c)
     print_indent(c);
 }
 
-void punctuator_generator(context& c)
+void generate_punctuator(context& c)
 {
     static const char* const puncs[] = {",", ":", ";", "*", "=", "...", "#", ".", "->", "++", "--", "##",
                                          "&", "+", "-", "~", "!", "/", "%", "<<", ">>", "!=",
@@ -128,7 +128,7 @@ void punctuator_generator(context& c)
 
     --c.tokens_left;
 
-    ptrdiff_t i = generate_0_n(c.rng, boost::size(puncs));
+    ptrdiff_t i = rand_0n(c.rng, boost::size(puncs));
     assert(i >= 0 && i < boost::size(puncs));
 
     std::cout << " " << puncs[i] << " ";
@@ -150,7 +150,7 @@ void generate_keyword(context& c)
 
     --c.tokens_left;
 
-    ptrdiff_t i = generate_0_n(c.rng, boost::size(kws));
+    ptrdiff_t i = rand_0n(c.rng, boost::size(kws));
     assert(i >= 0 && i < boost::size(kws));
 
     std::cout << " " << kws[i] << " ";
@@ -161,14 +161,15 @@ void generate_integer_literal(context& c)
     static const char* const suffixes[] = {"", "u", "l", "ul", "ll", "ull"};
     --c.tokens_left;
 
-    std::cout << " " << generate_0_n(c.rng, 123) << suffixes[generate_0_n(c.rng, boost::size(suffixes))] << " ";
+    std::cout << " " << rand_0n(c.rng, 123) << suffixes[rand_0n(c.rng, boost::size(suffixes))] << " ";
 }
 
 void generate_once(context &c)
 {
-    static const double weights[] = {0.25, 0.03, 0.45, 0.2, 0.02, 0.05};
-    void (*gens[])(context&) = {&identifier_generator, &paren_generator, &punctuator_generator,
-                                &generate_keyword, &braces_generator, &generate_integer_literal};
+    static const double weights[] = {5., 2., 10.,
+                                     4., 1., 2.};
+    void (*gens[])(context&) = {&generate_identifier, &generate_paren, &generate_punctuator,
+                                &generate_keyword, &generate_braces, &generate_integer_literal};
 
     boost::random::discrete_distribution<ptrdiff_t> dist(weights);
 
