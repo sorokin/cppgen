@@ -1,72 +1,33 @@
 #include <iostream>
+
 #include <boost/program_options.hpp>
-#include <boost/random.hpp>
-#include <boost/range/size.hpp>
+
+#include "random_utils.h"
+#include "context.h"
 
 using namespace std;
+using namespace random_utils;
 
 namespace po = boost::program_options;
-
-struct context
-{
-    context(size_t n, size_t, int seed);
-
-    size_t tokens_left;
-    size_t max_nesting_depth;
-    size_t nesting_depth;
-    size_t indent;
-
-    boost::mt19937 rng;
-};
-
-context::context(size_t n, size_t max_nesting_depth, int seed)
-    : tokens_left(n)
-    , max_nesting_depth(max_nesting_depth)
-    , nesting_depth()
-    , indent()
-    , rng(seed)
-{}
-
-void print_indent(context const& c)
-{
-    std::cout << std::string(c.indent * 4, ' ');
-}
-
-template <typename Engine, typename Int>
-Int rand_0n(Engine& e, Int limit)
-{
-    assert(limit != 0);
-
-    Int i = boost::uniform_int<Int>(static_cast<Int>(0), limit - 1)(e);
-    assert(i < limit);
-    return i;
-}
 
 void generate_some(context& c);
 
 void generate_identifier(context& c)
 {
-    const double weights[] = {20., 15., 7., 1., 0.1, 0.02,
-                              0.02, 0.05, 0.05, 0.02, 0.05,
-                              0.05, 0.05};
-    static const char* const ids[] = {"foo", "bar", "baz", "qux", "quux", "corge",
-                                      "grault", "garply", "waldo", "fred", "plugh",
-                                      "xyzzy", "thud"};
-
     --c.tokens_left;
 
-    boost::random::discrete_distribution<ptrdiff_t> dist(weights);
+    const char* id = take_random_weighted(c.rng, {{20., "foo"}, {15., "bar"}, {7., "baz"}, {1., "qux"}, {0.1, "quux"},
+                                                  {0.02, "corge"}, {0.02, "grault"}, {0.05, "garply"}, {0.05, "waldo"},
+                                                  {0.02, "fred"}, {0.05, "plugh"}, {0.05, "xyzzy"}, {0.05, "thud"}});
 
-    ptrdiff_t i = dist(c.rng);
-    assert(i >= 0 && i < boost::size(ids));
-
-    std::cout << ids[i] << rand_0n(c.rng, 7) << " ";
+    std::cout << id << rand_0n(c.rng, 7) << " ";
 }
 
 void generate_paren(context& c)
 {
-    static const char* const left[]  = {"(", "[", " < "};
-    static const char* const right[] = {")", "]", " > "};
+    static std::pair<const char*, const char*> const parens[]  = {{"(", ")"},
+                                                                  {"[", "]"},
+                                                                  {" < ", " > "}};
 
     if (c.tokens_left == 1)
     {
@@ -74,7 +35,7 @@ void generate_paren(context& c)
         return;
     }
 
-    if (rand_0n(c.rng, static_cast<size_t>(c.max_nesting_depth)) < c.nesting_depth)
+    if (rand_0n(c.rng, c.max_nesting_depth) < c.nesting_depth)
     {
         generate_identifier(c);
         return;
@@ -82,14 +43,13 @@ void generate_paren(context& c)
 
     c.tokens_left -= 2;
 
-    ptrdiff_t i = rand_0n(c.rng, boost::size(left));
-    assert(i >= 0 && i < boost::size(left));
+    auto p = take_random(c.rng, parens);
 
-    std::cout << left[i];
+    std::cout << p.first;
     ++c.nesting_depth;
     generate_some(c);
     --c.nesting_depth;
-    std::cout << right[i];
+    std::cout << p.second;
 }
 
 void generate_braces(context& c)
@@ -102,22 +62,20 @@ void generate_braces(context& c)
 
     c.tokens_left -= 2;
 
-    std::cout << "\n";
-    print_indent(c);
-    std::cout << "{\n";
+    print_linefeed(c);
+    std::cout << "{";
     ++c.nesting_depth;
     ++c.indent;
 
-    print_indent(c);
+    print_linefeed(c);
     generate_some(c);
-    std::cout << "\n";
 
     --c.indent;
     --c.nesting_depth;
 
-    print_indent(c);
-    std::cout << "}\n";
-    print_indent(c);
+    print_linefeed(c);
+    std::cout << "}";
+    print_linefeed(c);
 }
 
 void generate_punctuator(context& c)
@@ -130,10 +88,7 @@ void generate_punctuator(context& c)
 
     --c.tokens_left;
 
-    ptrdiff_t i = rand_0n(c.rng, boost::size(puncs));
-    assert(i >= 0 && i < boost::size(puncs));
-
-    std::cout << puncs[i] << " ";
+    std::cout << take_random(c.rng, puncs) << " ";
 }
 
 void generate_keyword(context& c)
@@ -152,48 +107,36 @@ void generate_keyword(context& c)
 
     --c.tokens_left;
 
-    ptrdiff_t i = rand_0n(c.rng, boost::size(kws));
-    assert(i >= 0 && i < boost::size(kws));
-
-    std::cout << kws[i] << " ";
+    std::cout << take_random(c.rng, kws) << " ";
 }
 
 void generate_integer_literal(context& c)
 {
-    static const char* const suffixes[] = {"", "u", "l", "ul", "ll", "ull"};
+    static const char* const suffices[] = {"", "u", "l", "ul", "ll", "ull"};
     --c.tokens_left;
 
-    std::cout << rand_0n(c.rng, 123) << suffixes[rand_0n(c.rng, boost::size(suffixes))] << " ";
+    std::cout << rand_0n(c.rng, 123) << take_random(c.rng, suffices) << " ";
 }
 
 void generate_float_literal(context& c)
 {
-    static const char* const suffixes[] = {".f", "."};
+    static const char* const suffices[] = {".f", "."};
     --c.tokens_left;
 
-    std::cout << rand_0n(c.rng, 123) << suffixes[rand_0n(c.rng, boost::size(suffixes))] << " ";
+    std::cout << rand_0n(c.rng, 123) << take_random(c.rng, suffices) << " ";
 }
 
 void generate_once(context &c)
 {
-    const double weights[] = {5., 2., 10.,
-                              4., double(c.max_nesting_depth - c.nesting_depth) / 2., 2.,
-                              2.};
-    void (*gens[])(context&) = {&generate_identifier, &generate_paren, &generate_punctuator,
-                                &generate_keyword, &generate_braces, &generate_integer_literal,
-                                &generate_float_literal};
-
-    boost::random::discrete_distribution<ptrdiff_t> dist(weights);
-
-    ptrdiff_t i = dist(c.rng);
-    assert(i >= 0 && i < boost::size(gens));
-
-    gens[i](c);
+    static std::pair<double, void (*)(context& c)> funcs[] = {{5., &generate_identifier}, {2., &generate_paren}, {10., &generate_punctuator},
+                                                              {4., &generate_keyword}, {double(c.max_nesting_depth - c.nesting_depth) / 2., &generate_braces},
+                                                              {2., &generate_integer_literal}, {2., &generate_float_literal}};
+    take_random_weighted(c.rng, funcs)(c);
 }
 
 void generate_some(context &c)
 {
-    unsigned n = boost::uniform_int<unsigned>(0, 7)(c.rng);
+    unsigned n = rand_0n(c.rng, 8u);
 
     while (n != 0 && c.tokens_left != 0)
     {
@@ -201,8 +144,7 @@ void generate_some(context &c)
         --n;
     }
 
-    std::cout << "\n";
-    print_indent(c);
+    print_linefeed(c);
 }
 
 void generate_all(context &c)

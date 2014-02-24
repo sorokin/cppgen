@@ -1,0 +1,86 @@
+#ifndef RANDOM_UTILS_H
+#define RANDOM_UTILS_H
+
+#include <initializer_list>
+
+#include <boost/random.hpp>
+#include <boost/range/value_type.hpp>
+#include <boost/range/size.hpp>
+#include <boost/range/adaptors.hpp>
+#include <boost/type_traits/is_same.hpp>
+
+namespace random_utils
+{
+    namespace impl
+    {
+        template <typename Range, typename Engine>
+        typename boost::range_value<Range>::type::second_type take_random_weighted(Engine& e, Range const& list);
+
+        template <typename Range, typename Engine>
+        typename boost::range_value<Range>::type take_random(Engine& e, Range const& list);
+    }
+
+    template <typename Engine, typename Int>
+    Int rand_0n(Engine& e, Int limit)
+    {
+        assert(limit != 0);
+
+        Int i = boost::uniform_int<Int>(static_cast<Int>(0), limit - 1)(e);
+        assert(i < limit);
+        return i;
+    }
+
+    template <typename Engine, typename Range>
+    typename boost::range_value<Range>::type::second_type take_random_weighted(Engine& e, Range const& list)
+    {
+        return impl::take_random_weighted(e, list);
+    }
+
+    template <typename Engine>
+    char const* take_random_weighted(Engine& e, std::initializer_list<std::pair<double, char const*> > list)
+    {
+        return impl::take_random_weighted(e, list);
+    }
+
+    template <typename Range, typename Engine>
+    typename boost::range_value<Range>::type take_random(Engine& e, Range const& list)
+    {
+        return impl::take_random(e, list);
+    }
+
+    template <typename Engine>
+    char const* take_random(Engine& e, std::initializer_list<char const*> list)
+    {
+        return impl::take_random(e, list);
+    }
+
+    namespace impl
+    {
+        template <typename Range, typename Engine>
+        typename boost::range_value<Range>::type::second_type take_random_weighted(Engine& e, Range const& list)
+        {
+            static_assert(boost::is_same<typename boost::range_value<Range>::type::first_type, double>::value,
+                          "probability must be a double");
+
+            using namespace boost::adaptors;
+
+            boost::random::discrete_distribution<ptrdiff_t> dist(list | map_keys);
+
+            ptrdiff_t i = dist(e);
+            assert(i >= 0 && i < boost::size(list));
+            return (std::begin(list) + i)->second;
+        }
+
+        template <typename Range, typename Engine>
+        typename boost::range_value<Range>::type take_random(Engine& e, Range const& list)
+        {
+            using namespace boost::adaptors;
+
+            ptrdiff_t i = rand_0n(e, boost::size(list));
+            assert(i >= 0 && i < boost::size(list));
+            return *(std::begin(list) + i);
+        }
+    }
+}
+
+#endif // RANDOM_UTILS_H
