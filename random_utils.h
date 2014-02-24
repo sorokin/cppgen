@@ -54,6 +54,21 @@ namespace random_utils
         return impl::take_random(e, list);
     }
 
+    template <typename Engine>
+    bool probably(Engine& e, double probability)
+    {
+        boost::random::uniform_real_distribution<double> dist;
+
+        return dist(e) <= probability;
+    }
+
+    template <typename Engine, typename F>
+    void a_few_times(Engine& e, unsigned limit, F const& f)
+    {
+        for (unsigned i = 0, n = rand_0n(e, limit); i != n; ++i)
+            f();
+    }
+
     namespace impl
     {
         template <typename Range, typename Engine>

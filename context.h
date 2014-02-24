@@ -6,9 +6,8 @@
 
 struct context
 {
-    context(size_t n, size_t, int seed);
+    context(size_t, int seed);
 
-    size_t tokens_left;
     size_t max_nesting_depth;
     size_t nesting_depth;
     size_t indent;

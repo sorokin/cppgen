@@ -1,8 +1,7 @@
 #include "context.h"
 
-context::context(size_t n, size_t max_nesting_depth, int seed)
-    : tokens_left(n)
-    , max_nesting_depth(max_nesting_depth)
+context::context(size_t max_nesting_depth, int seed)
+    : max_nesting_depth(max_nesting_depth)
     , nesting_depth()
     , indent()
     , rng(seed)
