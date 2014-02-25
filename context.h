@@ -6,7 +6,7 @@
 
 struct context
 {
-    context(size_t, int seed);
+    context(size_t);
 
     size_t max_nesting_depth;
     size_t nesting_depth;

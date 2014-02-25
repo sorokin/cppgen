@@ -508,7 +508,7 @@ int main(int argc, char* argv[])
             return 0;
         }
 
-        context ctx(max_nesting_depth, std::time(0));
+        context ctx(max_nesting_depth);
         generate_file(ctx, number_of_top_level_declarations);
     }
     catch (std::exception const& e)

@@ -1,11 +1,15 @@
 #include "context.h"
 
-context::context(size_t max_nesting_depth, int seed)
+#include <boost/random/random_device.hpp>
+
+context::context(size_t max_nesting_depth)
     : max_nesting_depth(max_nesting_depth)
     , nesting_depth()
     , indent()
-    , rng(seed)
-{}
+{
+    boost::random::random_device dev;
+    rng.seed(dev);
+}
 
 void print_indent(context const& c)
 {
