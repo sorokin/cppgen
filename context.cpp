@@ -21,3 +21,23 @@ void print_linefeed(context const& c)
     std::cout << "\n";
     print_indent(c);
 }
+
+void open_brace(context& c)
+{
+    print_linefeed(c);
+    std::cout << "{";
+    ++c.nesting_depth;
+    ++c.indent;
+
+    print_linefeed(c);
+}
+
+void close_brace(context& c)
+{
+    --c.indent;
+    --c.nesting_depth;
+
+    print_linefeed(c);
+    std::cout << "}";
+    print_linefeed(c);
+}

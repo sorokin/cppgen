@@ -17,5 +17,7 @@ struct context
 
 void print_indent(context const& c);
 void print_linefeed(context const& c);
+void open_brace(context& c);
+void close_brace(context& c);
 
 #endif // CONTEXT_H
