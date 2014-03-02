@@ -1,0 +1,44 @@
+http://llvm.org/bugs/show_bug.cgi?id=18963
+Assertion failed: Access == AS_private || Access == AS_protected, file C:\work\llvm\tools\clang\lib\Sema\SemaAccess.cpp, line 74
+
+struct baz3 
+{
+    short bar5 (struct foo4 {} bar2);
+    long foo5 (float foo6 = foo4);
+};
+
+http://llvm.org/bugs/show_bug.cgi?id=18964
+Assertion failed: !Old || Old->getCachedLinkage() == D->getCachedLinkage(), file Decl.cpp, line 1260
+
+unsigned &*foo5;
+extern struct {} *foo5;
+
+http://llvm.org/bugs/show_bug.cgi?id=19018
+Assertion `Access != AS_none && "Access specifier is AS_none inside a record decl"' failed
+
+struct foo1 
+{
+    short foo6 (enum bar0 {} bar3);
+};
+
+http://gcc.gnu.org/bugzilla/show_bug.cgi?id=60335
+confused by earlier errors, bailing out
+
+struct baz0 
+{
+    int baz1(void bar0, struct bar0 {} bar3);
+};
+
+http://gcc.gnu.org/bugzilla/show_bug.cgi?id=60385
+confused by earlier errors, bailing out
+
+float foo4()
+{}
+
+namespace foo4 
+{
+    struct bar6 
+    {
+        friend wchar_t bar1();
+    };
+}
