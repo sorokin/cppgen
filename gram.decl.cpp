@@ -74,9 +74,7 @@ void generate_noptr_declarator(context& c, bool functions_only, bool allow_decla
     else if (probably(c.rng, 0.3))
     {
         generate_noptr_declarator(c, functions_only, true);
-        std::cout << "(";
-        generate_parameter_declaration_clause(c);
-        std::cout << ")";
+        generate_parameters_and_qualifiers(c);
     }
     else if (probably(c.rng, 0.7))
     {
@@ -91,6 +89,15 @@ void generate_noptr_declarator(context& c, bool functions_only, bool allow_decla
         generate_ptr_declarator(c, functions_only);
         std::cout << ")";
     }
+}
+
+void generate_parameters_and_qualifiers(context& c)
+{
+    // ( parameter-declaration-clause ) attribute-specifier-seq[opt] cv-qualifier-seq[opt] ref-qualifier[opt] exception-specification[opt]
+
+    std::cout << "(";
+    generate_parameter_declaration_clause(c);
+    std::cout << ")";
 }
 
 void generate_ptr_operator(context& c)
@@ -109,6 +116,68 @@ void generate_declarator_id(context& c)
     // ::opt nested-name-specifieropt class-name
 
     generate_identifier(c);
+}
+
+void generate_type_id(context& c)
+{
+    // type-specifier-seq abstract-declarator[opt]
+
+    generate_decl_specifier_seq(c);
+    std::cout << " ";
+    if (probably(c.rng, .8))
+        generate_abstract_declarator(c);
+}
+
+void generate_abstract_declarator(context& c)
+{
+    // ptr-abstract-declarator
+    // noptr-abstract-declarator[opt] parameters-and-qualifiers trailing-return-type
+    // abstract-pack-declarator
+
+    generate_ptr_abstract_declarator(c);
+}
+
+void generate_ptr_abstract_declarator(context& c)
+{
+    // noptr-abstract-declarator
+    // ptr-operator ptr-abstract-declarator[opt]
+
+    if (probably(c.rng, 0.5))
+        generate_noptr_abstract_declarator(c);
+    else
+    {
+        generate_ptr_operator(c);
+        if (probably(c.rng, 0.5))
+            generate_ptr_abstract_declarator(c);
+    }
+}
+
+void generate_noptr_abstract_declarator(context& c)
+{
+    // noptr-abstract-declarator[opt] parameters-and-qualifiers
+    // noptr-abstract-declarator[opt] [ constant-expression[opt] ] attribute-specifier-seq[opt]
+    // ( ptr-abstract-declarator )
+
+    if (probably(c.rng, .5))
+    {
+        if (probably(c.rng, .3))
+            generate_noptr_abstract_declarator(c);
+
+        if (probably(c.rng, .3))
+            generate_parameters_and_qualifiers(c);
+        else
+        {
+            std::cout << "[";
+            if (probably(c.rng, .4))
+                generate_constant_expression(c);
+        }
+    }
+    else
+    {
+        std::cout << "(";
+        generate_ptr_abstract_declarator(c);
+        std::cout << ")";
+    }
 }
 
 void generate_parameter_declaration(context& c)

@@ -3,6 +3,10 @@
 
 struct context;
 
+void generate_unary_expression(context& c);
+void generate_cast_expression(context& c);
+void generate_pm_expression(context& c);
+void generate_multiplicative_expression(context& c);
 void generate_additive_expression(context& c);
 void generate_shift_expression(context& c);
 void generate_relational_expression(context& c);

@@ -7,9 +7,99 @@
 
 using namespace random_utils;
 
+void generate_unary_expression(context& c)
+{
+    // postfix-expression
+    // ++ cast-expression
+    // -- cast-expression
+    // unary-operator cast-expression
+    // sizeof unary-expression
+    // sizeof ( type-id )
+    // sizeof ... ( identifier )
+    // alignof ( type-id )
+    // noexcept-expression
+    // new-expression
+    // delete-expression
+
+    generate_identifier(c);
+}
+
+void generate_cast_expression(context& c)
+{
+    // unary-expression
+    // ( type-id ) cast-expression
+
+    if (probably(c.rng, .7))
+        generate_unary_expression(c);
+    else
+    {
+        std::cout << "(";
+        generate_type_id(c);
+        std::cout << ")";
+        generate_cast_expression(c);
+    }
+}
+
+void generate_pm_expression(context& c)
+{
+    // cast-expression
+    // pm-expression .* cast-expression
+    // pm-expression ->* cast-expression
+
+    generate_cast_expression(c);
+
+    while (probably(c.rng, .1))
+    {
+        static std::pair<double, char const*> options[] = {
+            {1., ".*"},
+            {1., "->*"},
+        };
+
+        std::cout << " " << take_random_weighted(c.rng, options) << " ";
+        generate_cast_expression(c);
+    }
+}
+
+void generate_multiplicative_expression(context& c)
+{
+    // pm-expression
+    // multiplicative-expression * pm-expression
+    // multiplicative-expression / pm-expression
+    // multiplicative-expression % pm-expression
+
+    generate_pm_expression(c);
+
+    while (probably(c.rng, .1))
+    {
+        static std::pair<double, char const*> options[] = {
+            {1., "*"},
+            {1., "/"},
+            {1., "%"},
+        };
+
+        std::cout << " " << take_random_weighted(c.rng, options) << " ";
+        generate_pm_expression(c);
+    }
+}
+
 void generate_additive_expression(context& c)
 {
-    generate_identifier(c);
+    // multiplicative-expression
+    // additive-expression + multiplicative-expression
+    // additive-expression - multiplicative-expression
+
+    generate_multiplicative_expression(c);
+
+    while (probably(c.rng, .1))
+    {
+        static std::pair<double, char const*> options[] = {
+            {1., "+"},
+            {1., "-"},
+        };
+
+        std::cout << " " << take_random_weighted(c.rng, options) << " ";
+        generate_multiplicative_expression(c);
+    }
 }
 
 void generate_shift_expression(context& c)
