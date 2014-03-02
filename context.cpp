@@ -4,7 +4,6 @@
 
 context::context(size_t max_nesting_depth)
     : max_nesting_depth(max_nesting_depth)
-    , nesting_depth()
     , indent()
 {
     boost::random::random_device dev;
@@ -22,22 +21,28 @@ void print_linefeed(context const& c)
     print_indent(c);
 }
 
+void print_linefeed_and_tab(context& c)
+{
+    ++c.indent;
+    print_linefeed(c);
+}
+
+void print_linefeed_and_untab(context& c)
+{
+    --c.indent;
+    print_linefeed(c);
+}
+
 void open_brace(context& c)
 {
     print_linefeed(c);
     std::cout << "{";
-    ++c.nesting_depth;
-    ++c.indent;
-
-    print_linefeed(c);
+    print_linefeed_and_tab(c);
 }
 
 void close_brace(context& c)
 {
-    --c.indent;
-    --c.nesting_depth;
-
-    print_linefeed(c);
+    print_linefeed_and_untab(c);
     std::cout << "}";
     print_linefeed(c);
 }

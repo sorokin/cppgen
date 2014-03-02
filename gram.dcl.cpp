@@ -14,13 +14,9 @@ void generate_declaration_seq(context& c)
     // declaration
     // declaration-seq declaration
 
-    if (probably(c.rng, 0.2))
+    do
         generate_declaration(c);
-    else
-    {
-        generate_declaration_seq(c);
-        generate_declaration(c);
-    }
+    while (probably(c.rng, 0.8));
 }
 
 void generate_declaration(context &c)
@@ -36,7 +32,8 @@ void generate_declaration(context &c)
     // attribute-declaration
 
     static std::pair<double, void (*)(context&)> options[] = {{100., &generate_block_declaration},
-                                                              {100., &generate_function_definition}
+                                                              {100., &generate_function_definition},
+                                                              {20., &generate_namespace_definition}
                                                               };
 
     take_random_weighted(c.rng, options)(c);
@@ -44,13 +41,16 @@ void generate_declaration(context &c)
 
 void generate_block_declaration(context& c)
 {
-    static std::pair<double, void (*)(context&)> options[] = {{100., &generate_simple_declaration},
-                                                              {20., &generate_namespace_definition}
-                                                            // asm-definition
-                                                            // namespace-alias-definition
-                                                            // using-declaration
-                                                            // using-directive
-                                                            // static_assert-declaration
+    // simple-declaration
+    // asm-definition
+    // namespace-alias-definition
+    // using-declaration
+    // using-directive
+    // static_assert-declaration
+    // alias-declaration
+    // opaque-enum-declaration
+
+    static std::pair<double, void (*)(context&)> options[] = {{100., &generate_simple_declaration}
                                                               };
 
     take_random_weighted(c.rng, options)(c);

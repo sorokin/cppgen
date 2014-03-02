@@ -9,7 +9,6 @@ struct context
     context(size_t);
 
     size_t max_nesting_depth;
-    size_t nesting_depth;
     size_t indent;
 
     boost::mt19937 rng;
@@ -17,6 +16,8 @@ struct context
 
 void print_indent(context const& c);
 void print_linefeed(context const& c);
+void print_linefeed_and_tab(context& c);
+void print_linefeed_and_untab(context& c);
 void open_brace(context& c);
 void close_brace(context& c);
 

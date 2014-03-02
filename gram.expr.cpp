@@ -6,6 +6,11 @@
 
 using namespace random_utils;
 
+void generate_assignment_expression(context& c)
+{
+    generate_identifier(c);
+}
+
 void generate_expression(context& c)
 {
     generate_identifier(c);

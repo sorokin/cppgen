@@ -3,6 +3,7 @@
 
 struct context;
 
+void generate_assignment_expression(context& c);
 void generate_expression(context& c);
 void generate_constant_expression(context& c);
 

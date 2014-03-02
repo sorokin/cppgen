@@ -14,6 +14,7 @@ void generate_parameter_declaration(context& c);
 void generate_parameter_declaration_list(context& c);
 void generate_parameter_declaration_clause(context& c);
 void generate_initializer(context& c);
+void generate_initializer_clause(context& c);
 void generate_function_definition(context& c);
 void generate_function_body(context& c);
 

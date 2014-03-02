@@ -169,7 +169,15 @@ void generate_initializer(context& c)
     // ( expression-list )
 
     std::cout << "= ";
-    generate_identifier(c);
+    generate_initializer_clause(c);
+}
+
+void generate_initializer_clause(context& c)
+{
+    // assignment-expression
+    // braced-init-list
+
+    generate_assignment_expression(c);
 }
 
 void generate_function_definition(context& c)
