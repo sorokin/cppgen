@@ -3,7 +3,18 @@
 
 struct context;
 
+void generate_additive_expression(context& c);
+void generate_shift_expression(context& c);
+void generate_relational_expression(context& c);
+void generate_equality_expression(context& c);
+void generate_and_expression(context& c);
+void generate_exclusive_or_expression(context& c);
+void generate_inclusive_or_expression(context& c);
+void generate_logical_and_expression(context& c);
+void generate_logical_or_expression(context& c);
+void generate_conditional_expression(context& c);
 void generate_assignment_expression(context& c);
+void generate_assignment_operator(context& c);
 void generate_expression(context& c);
 void generate_constant_expression(context& c);
 
