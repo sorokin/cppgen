@@ -247,6 +247,7 @@ void generate_jump_statement(context& c)
                std::cout << " ";
                generate_expression(c);
             }
+            std::cout << ";";
             print_linefeed(c);
         }},
         {1., [](context& c) {
