@@ -21,6 +21,18 @@ struct foo1
     short foo6 (enum bar0 {} bar3);
 };
 
+http://llvm.org/bugs/show_bug.cgi?id=19022
+SIGSEGV in ParseSwitchStatement()
+
+int baz5()
+{}
+    
+bool bar0()
+{
+    switch (int foo0)
+    case bar5: ;
+}
+
 http://gcc.gnu.org/bugzilla/show_bug.cgi?id=60335
 confused by earlier errors, bailing out
 
