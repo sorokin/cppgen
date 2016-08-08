@@ -66,3 +66,20 @@ unsigned ((bar3 [foo2  < (unsigned (&)[)+(struct foo1
  &)]))
 {
 }
+
+https://llvm.org/bugs/show_bug.cgi?id=28903
+SIGSEGV in CXXRecordDecl::getFirstFriend
+
+int bar6()
+{
+    enum
+    {
+        bar3 = (struct bar0
+        {
+            enum
+            {
+                bar4 = (enum
+                {
+                    foo4,
+                    bar0 = foo4
+                }
