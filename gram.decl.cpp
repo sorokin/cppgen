@@ -170,6 +170,7 @@ void generate_noptr_abstract_declarator(context& c)
             std::cout << "[";
             if (probably(c.rng, .4))
                 generate_constant_expression(c);
+            std::cout << "]";
         }
     }
     else
