@@ -54,3 +54,15 @@ namespace foo4
         friend wchar_t bar1();
     };
 }
+
+https://llvm.org/bugs/show_bug.cgi?id=28902
+SIGSEGV in TokenLexer::Lex
+
+float foo2;
+unsigned ((bar3 [foo2  < (unsigned (&)[)+(struct foo1
+{
+
+}
+ &)]))
+{
+}
