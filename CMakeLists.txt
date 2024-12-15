@@ -3,6 +3,7 @@ project(cppgen)
 
 find_package(Boost 1.86 COMPONENTS program_options)
 
+set(CMAKE_CXX_STANDARD "20")
 if ("${VCPKG_TARGET_TRIPLET}" STREQUAL "x64-windows-static")
     set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 endif()

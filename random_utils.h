@@ -1,11 +1,10 @@
 #ifndef RANDOM_UTILS_H
 #define RANDOM_UTILS_H
 
+#include <cassert>
 #include <initializer_list>
 #include <random>
-
-#include <boost/range/value_type.hpp>
-#include <boost/range/adaptors.hpp>
+#include <ranges>
 
 namespace random_utils
 {
@@ -72,12 +71,10 @@ namespace random_utils
         template <typename Range, typename Engine>
         auto take_random_weighted(Engine& e, Range const& list)
         {
-            static_assert(std::is_same_v<typename boost::range_value<Range>::type::first_type, double>,
+            static_assert(std::is_same_v<typename std::ranges::range_value_t<Range>::first_type, double>,
                           "probability must be a double");
 
-            using namespace boost::adaptors;
-
-            auto weights = list | map_keys;
+            auto weights = list | std::ranges::views::keys;
             std::discrete_distribution<ptrdiff_t> dist(weights.begin(), weights.end());
 
             ptrdiff_t i = dist(e);
@@ -88,8 +85,6 @@ namespace random_utils
         template <typename Range, typename Engine>
         auto take_random(Engine& e, Range const& list)
         {
-            using namespace boost::adaptors;
-
             ptrdiff_t i = rand_0n(e, std::size(list));
             assert(i >= 0 && i < std::size(list));
             return *(std::begin(list) + i);
