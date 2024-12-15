@@ -9,15 +9,15 @@ namespace random_utils
 {
     namespace impl
     {
-        template <typename Range, typename Engine>
-        auto take_random_weighted(Engine& e, Range const& list);
+        template <typename Range>
+        auto take_random_weighted(std::uniform_random_bit_generator auto& e, Range const& list);
 
-        template <typename Range, typename Engine>
-        auto take_random(Engine& e, Range const& list);
+        template <typename Range>
+        auto take_random(std::uniform_random_bit_generator auto& e, Range const& list);
     }
 
-    template <typename Engine, typename Int>
-    Int rand_0n(Engine& e, Int limit)
+    template <typename Int>
+    Int rand_0n(std::uniform_random_bit_generator auto& e, Int limit)
     {
         assert(limit != 0);
 
@@ -26,40 +26,37 @@ namespace random_utils
         return i;
     }
 
-    template <typename Engine, typename Range>
-    auto take_random_weighted(Engine& e, Range const& list)
+    template <typename Range>
+    auto take_random_weighted(std::uniform_random_bit_generator auto& e, Range const& list)
     {
         return impl::take_random_weighted(e, list);
     }
 
-    template <typename Engine>
-    char const* take_random_weighted(Engine& e, std::initializer_list<std::pair<double, char const*> > list)
+    char const* take_random_weighted(std::uniform_random_bit_generator auto& e, std::initializer_list<std::pair<double, char const*> > list)
     {
         return impl::take_random_weighted(e, list);
     }
 
-    template <typename Range, typename Engine>
-    auto take_random(Engine& e, Range const& list)
+    template <typename Range>
+    auto take_random(std::uniform_random_bit_generator auto& e, Range const& list)
     {
         return impl::take_random(e, list);
     }
 
-    template <typename Engine>
-    char const* take_random(Engine& e, std::initializer_list<char const*> list)
+    char const* take_random(std::uniform_random_bit_generator auto& e, std::initializer_list<char const*> list)
     {
         return impl::take_random(e, list);
     }
 
-    template <typename Engine>
-    bool probably(Engine& e, double probability)
+    bool probably(std::uniform_random_bit_generator auto& e, double probability)
     {
         std::uniform_real_distribution<double> dist;
 
         return dist(e) <= probability;
     }
 
-    template <typename Engine, typename F>
-    void a_few_times(Engine& e, unsigned limit, F const& f)
+    template <typename F>
+    void a_few_times(std::uniform_random_bit_generator auto& e, unsigned limit, F const& f)
     {
         for (unsigned i = 0, n = rand_0n(e, limit); i != n; ++i)
             f();
@@ -67,8 +64,8 @@ namespace random_utils
 
     namespace impl
     {
-        template <typename Range, typename Engine>
-        auto take_random_weighted(Engine& e, Range const& list)
+        template <typename Range>
+        auto take_random_weighted(std::uniform_random_bit_generator auto& e, Range const& list)
         {
             static_assert(std::is_same_v<typename std::ranges::range_value_t<Range>::first_type, double>,
                           "probability must be a double");
@@ -81,8 +78,8 @@ namespace random_utils
             return (std::begin(list) + i)->second;
         }
 
-        template <typename Range, typename Engine>
-        auto take_random(Engine& e, Range const& list)
+        template <typename Range>
+        auto take_random(std::uniform_random_bit_generator auto& e, Range const& list)
         {
             ptrdiff_t i = rand_0n(e, std::size(list));
             assert(i >= 0 && i < std::size(list));
