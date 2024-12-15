@@ -14,10 +14,10 @@ namespace random_utils
     namespace impl
     {
         template <typename Range, typename Engine>
-        typename boost::range_value<Range>::type::second_type take_random_weighted(Engine& e, Range const& list);
+        auto take_random_weighted(Engine& e, Range const& list);
 
         template <typename Range, typename Engine>
-        typename boost::range_value<Range>::type take_random(Engine& e, Range const& list);
+        auto take_random(Engine& e, Range const& list);
     }
 
     template <typename Engine, typename Int>
@@ -31,7 +31,7 @@ namespace random_utils
     }
 
     template <typename Engine, typename Range>
-    typename boost::range_value<Range>::type::second_type take_random_weighted(Engine& e, Range const& list)
+    auto take_random_weighted(Engine& e, Range const& list)
     {
         return impl::take_random_weighted(e, list);
     }
@@ -43,7 +43,7 @@ namespace random_utils
     }
 
     template <typename Range, typename Engine>
-    typename boost::range_value<Range>::type take_random(Engine& e, Range const& list)
+    auto take_random(Engine& e, Range const& list)
     {
         return impl::take_random(e, list);
     }
@@ -72,7 +72,7 @@ namespace random_utils
     namespace impl
     {
         template <typename Range, typename Engine>
-        typename boost::range_value<Range>::type::second_type take_random_weighted(Engine& e, Range const& list)
+        auto take_random_weighted(Engine& e, Range const& list)
         {
             static_assert(boost::is_same<typename boost::range_value<Range>::type::first_type, double>::value,
                           "probability must be a double");
@@ -87,7 +87,7 @@ namespace random_utils
         }
 
         template <typename Range, typename Engine>
-        typename boost::range_value<Range>::type take_random(Engine& e, Range const& list)
+        auto take_random(Engine& e, Range const& list)
         {
             using namespace boost::adaptors;
 
