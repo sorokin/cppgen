@@ -1,5 +1,4 @@
-#ifndef GRAM_EXPR_H
-#define GRAM_EXPR_H
+#pragma once
 
 struct context;
 
@@ -21,5 +20,3 @@ void generate_assignment_expression(context& c);
 void generate_assignment_operator(context& c);
 void generate_expression(context& c);
 void generate_constant_expression(context& c);
-
-#endif // GRAM_EXPR_H

@@ -1,5 +1,4 @@
-#ifndef GRAM_CLASS_H
-#define GRAM_CLASS_H
+#pragma once
 
 struct context;
 
@@ -10,5 +9,3 @@ void generate_member_declarator_list(context& c);
 void generate_member_declaration(context& c);
 void generate_access_specifier(context& c);
 void generate_member_specification(context& c);
-
-#endif // GRAM_CLASS_H

@@ -1,5 +1,4 @@
-#ifndef GRAM_DCL_H
-#define GRAM_DCL_H
+#pragma once
 
 struct context;
 
@@ -21,5 +20,3 @@ void generate_enumerator_definition(context& c);
 void generate_enumerator(context& c);
 void generate_namespace_definition(context& c);
 void generate_namespace_body(context& c);
-
-#endif // GRAM_DCL_H

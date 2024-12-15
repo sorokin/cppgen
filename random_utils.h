@@ -1,5 +1,4 @@
-#ifndef RANDOM_UTILS_H
-#define RANDOM_UTILS_H
+#pragma once
 
 #include <cassert>
 #include <initializer_list>
@@ -91,5 +90,3 @@ namespace random_utils
         }
     }
 }
-
-#endif // RANDOM_UTILS_H

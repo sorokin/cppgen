@@ -1,5 +1,4 @@
-#ifndef GRAM_STMT_H
-#define GRAM_STMT_H
+#pragma once
 
 struct context;
 
@@ -16,5 +15,3 @@ void generate_for_range_declaration(context& c);
 void generate_for_range_initializer(context& c);
 void generate_jump_statement(context& c);
 void generate_declaration_statement(context& c);
-
-#endif // GRAM_STMT_H

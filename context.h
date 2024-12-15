@@ -1,6 +1,4 @@
-#ifndef CONTEXT_H
-#define CONTEXT_H
-
+#pragma once
 #include <cstdlib>
 #include <random>
 
@@ -20,5 +18,3 @@ void print_linefeed_and_tab(context& c);
 void print_linefeed_and_untab(context& c);
 void open_brace(context& c);
 void close_brace(context& c);
-
-#endif // CONTEXT_H

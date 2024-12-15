@@ -1,5 +1,4 @@
-#ifndef GRAM_DECL_H
-#define GRAM_DECL_H
+#pragma once
 
 struct context;
 
@@ -22,5 +21,3 @@ void generate_initializer(context& c);
 void generate_initializer_clause(context& c);
 void generate_function_definition(context& c);
 void generate_function_body(context& c);
-
-#endif // GRAM_DECL_H
