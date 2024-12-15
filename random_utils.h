@@ -2,8 +2,8 @@
 #define RANDOM_UTILS_H
 
 #include <initializer_list>
+#include <random>
 
-#include <boost/random.hpp>
 #include <boost/range/value_type.hpp>
 #include <boost/range/size.hpp>
 #include <boost/range/adaptors.hpp>
@@ -24,7 +24,7 @@ namespace random_utils
     {
         assert(limit != 0);
 
-        Int i = boost::uniform_int<Int>(static_cast<Int>(0), limit - 1)(e);
+        Int i = std::uniform_int_distribution<Int>(static_cast<Int>(0), limit - 1)(e);
         assert(i < limit);
         return i;
     }
@@ -56,7 +56,7 @@ namespace random_utils
     template <typename Engine>
     bool probably(Engine& e, double probability)
     {
-        boost::random::uniform_real_distribution<double> dist;
+        std::uniform_real_distribution<double> dist;
 
         return dist(e) <= probability;
     }
@@ -78,7 +78,8 @@ namespace random_utils
 
             using namespace boost::adaptors;
 
-            boost::random::discrete_distribution<ptrdiff_t> dist(list | map_keys);
+            auto weights = list | map_keys;
+            std::discrete_distribution<ptrdiff_t> dist(weights.begin(), weights.end());
 
             ptrdiff_t i = dist(e);
             assert(i >= 0 && i < boost::size(list));

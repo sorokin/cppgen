@@ -1,8 +1,6 @@
 {
   "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg.schema.json",
   "dependencies": [
-    "boost-program-options",
-    "boost-random",
-    "boost-system"
+    "boost-program-options"
   ]
 }

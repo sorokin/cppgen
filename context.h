@@ -2,7 +2,7 @@
 #define CONTEXT_H
 
 #include <cstdlib>
-#include <boost/random.hpp>
+#include <random>
 
 struct context
 {
@@ -11,7 +11,7 @@ struct context
     size_t max_nesting_depth;
     size_t indent;
 
-    boost::mt19937 rng;
+    std::mt19937 rng;
 };
 
 void print_indent(context const& c);

@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.26)
 project(cppgen)
 
-find_package(Boost 1.86 COMPONENTS program_options random system)
+find_package(Boost 1.86 COMPONENTS program_options)
 
 if ("${VCPKG_TARGET_TRIPLET}" STREQUAL "x64-windows-static")
     set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
@@ -28,4 +28,4 @@ add_executable(cppgen
     random_utils.h
 )
 
-target_link_libraries(cppgen PRIVATE Boost::program_options Boost::random Boost::system)
+target_link_libraries(cppgen PRIVATE Boost::program_options)

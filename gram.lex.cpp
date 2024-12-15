@@ -1,4 +1,7 @@
 #include "gram.lex.h"
+
+#include <iostream>
+
 #include "context.h"
 #include "random_utils.h"
 
