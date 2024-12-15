@@ -5,7 +5,6 @@
 #include <random>
 
 #include <boost/range/value_type.hpp>
-#include <boost/range/size.hpp>
 #include <boost/range/adaptors.hpp>
 
 namespace random_utils
@@ -82,7 +81,7 @@ namespace random_utils
             std::discrete_distribution<ptrdiff_t> dist(weights.begin(), weights.end());
 
             ptrdiff_t i = dist(e);
-            assert(i >= 0 && i < boost::size(list));
+            assert(i >= 0 && i < std::size(list));
             return (std::begin(list) + i)->second;
         }
 
@@ -91,8 +90,8 @@ namespace random_utils
         {
             using namespace boost::adaptors;
 
-            ptrdiff_t i = rand_0n(e, boost::size(list));
-            assert(i >= 0 && i < boost::size(list));
+            ptrdiff_t i = rand_0n(e, std::size(list));
+            assert(i >= 0 && i < std::size(list));
             return *(std::begin(list) + i);
         }
     }
