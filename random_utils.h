@@ -7,7 +7,6 @@
 #include <boost/range/value_type.hpp>
 #include <boost/range/size.hpp>
 #include <boost/range/adaptors.hpp>
-#include <boost/type_traits/is_same.hpp>
 
 namespace random_utils
 {
@@ -74,7 +73,7 @@ namespace random_utils
         template <typename Range, typename Engine>
         auto take_random_weighted(Engine& e, Range const& list)
         {
-            static_assert(boost::is_same<typename boost::range_value<Range>::type::first_type, double>::value,
+            static_assert(std::is_same_v<typename boost::range_value<Range>::type::first_type, double>,
                           "probability must be a double");
 
             using namespace boost::adaptors;
